@@ -25,8 +25,11 @@ export default function App() {
         <Meta />
         <Links />
       </head>
-      <body>
-        <Outlet />
+      <body className="bg-gradient-to-r from-cyan-500 to-blue-500 h-[100svh] flex  items-center flex-col">
+        <h1 className="text-4xl absolute top-5">Welcome to Remix</h1>
+        <div className="w-[50%] bg-white p-2 mt-[10%]">
+          <Outlet />
+        </div>
         <ScrollRestoration />
         <Scripts />
         <LiveReload />
