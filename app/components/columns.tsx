@@ -3,6 +3,7 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal } from "lucide-react";
 import type { uuIdTodoItem } from "../data";
+import { Link } from "@remix-run/react";
 
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
@@ -71,6 +72,7 @@ export const columns: ColumnDef<uuIdTodoItem>[] = [
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem
+              className="cursor-pointer"
               onClick={() => {
                 todoItem?.uuId && navigator.clipboard.writeText(todoItem.uuId);
               }}
@@ -78,11 +80,23 @@ export const columns: ColumnDef<uuIdTodoItem>[] = [
               Copy todo uuId
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>Edit</DropdownMenuItem>
-            <DropdownMenuItem>Delete</DropdownMenuItem>
+            <DropdownMenuItem className="cursor-pointer">
+              <Redirect item={todoItem}></Redirect>
+            </DropdownMenuItem>
+            <DropdownMenuItem className="text-red-300  focus:text-red-500 cursor-pointer">
+              Delete
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       );
     },
   },
 ];
+
+function Redirect(prop: { item: uuIdTodoItem }) {
+  return (
+    <Link className="w-full" to={`/todo/${prop.item.uuId}`}>
+      Edit
+    </Link>
+  );
+}

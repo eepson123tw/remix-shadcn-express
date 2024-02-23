@@ -1,6 +1,6 @@
 import type {
   MetaFunction,
-  LinksFunction,
+  // LinksFunction,
   LoaderFunctionArgs,
 } from "@remix-run/node";
 import { getTodo } from "../data";
