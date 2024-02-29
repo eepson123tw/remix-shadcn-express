@@ -29,6 +29,16 @@ const uuIdV1 = () => {
   });
 };
 
+const getId = (uuid: string): string => {
+  let id: string = "";
+  for (const key in fakeTodo.todoList) {
+    if (fakeTodo.todoList[key].uuId === uuid) {
+      id = key;
+    }
+  }
+  return id;
+};
+
 ////////////////////////////////////////////////////////////////////////////////
 // This is just a fake DB table. In a real app you'd be talking to a real db or
 // fetching from an existing API.
@@ -39,9 +49,10 @@ const fakeTodo = {
       .map((key) => fakeTodo.todoList[key])
       .sort(sortBy("-createdAt", "last"));
   },
-  // async get(id: string): Promise<ContactRecord | null> {
-  //   return fakeContacts.records[id] || null;
-  // },
+  async get(uuid: string): Promise<uuIdTodoItem | null> {
+    const id = getId(uuid);
+    return fakeTodo.todoList[id] || null;
+  },
   async create(values: todoItem): Promise<uuIdTodoItem> {
     const id = Math.random().toString(36).substring(2, 9);
     const createdAt = new Date().toISOString();
@@ -54,13 +65,14 @@ const fakeTodo = {
     fakeTodo.todoList[id] = newContact;
     return newContact;
   },
-  // async set(id: string, values: ContactMutation): Promise<ContactRecord> {
-  //   const contact = await fakeContacts.get(id);
-  //   invariant(contact, `No contact found for ${id}`);
-  //   const updatedContact = { ...contact, ...values };
-  //   fakeContacts.records[id] = updatedContact;
-  //   return updatedContact;
-  // },
+  async set(uuid: string, values: uuIdTodoItem): Promise<uuIdTodoItem> {
+    const id = getId(uuid);
+    const todo = await fakeTodo.get(uuid);
+    invariant(todo, `No contact found for ${id}, set Error`);
+    const updatedContact = { ...todo, ...values };
+    fakeTodo.todoList[id] = updatedContact;
+    return updatedContact;
+  },
   // destroy(id: string): null {
   //   delete fakeContacts.records[id];
   //   return null;
@@ -72,9 +84,10 @@ const fakeTodo = {
 export async function getTodo(query?: string | null) {
   await new Promise((resolve) => setTimeout(resolve, 500));
   let todoList = await fakeTodo.getAll();
+
   if (query) {
     todoList = matchSorter(todoList, query, {
-      keys: ["title", "description"],
+      keys: ["title", "description", "uuId"],
     });
   }
   return todoList.sort(sortBy("last", "createdAt"));
@@ -89,14 +102,14 @@ export async function getTodo(query?: string | null) {
 //   return fakeTodo.get(id);
 // }
 
-// export async function updateContact(id: string, updates: ContactMutation) {
-//   const contact = await fakeContacts.get(id);
-//   if (!contact) {
-//     throw new Error(`No contact found for ${id}`);
-//   }
-//   await fakeContacts.set(id, { ...contact, ...updates });
-//   return contact;
-// }
+export async function updateTodo(id: string, updates: object) {
+  const contact = await fakeTodo.get(id);
+  if (!contact) {
+    throw new Error(`No contact found for ${id},updateTodo Error`);
+  }
+  await fakeTodo.set(id, { ...contact, ...updates });
+  return contact;
+}
 
 // export async function deleteContact(id: string) {
 //   fakeContacts.destroy(id);

@@ -9,6 +9,8 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  useRouteError,
+  useLocation,
 } from "@remix-run/react";
 
 export const links: LinksFunction = () => [
@@ -17,6 +19,10 @@ export const links: LinksFunction = () => [
 ];
 
 export default function App() {
+  const location = useLocation();
+  const inRoot = !location.pathname.includes("todo");
+  const computedPage = () => `${inRoot ? "bg-white p-2" : ""} w-[50%] mt-[10%]`;
+
   return (
     <html lang="en">
       <head>
@@ -27,12 +33,30 @@ export default function App() {
       </head>
       <body className="bg-gradient-to-r from-cyan-500 to-blue-500 h-[100svh] flex  items-center flex-col">
         <h1 className="text-4xl absolute top-5">Welcome to Remix</h1>
-        <div className="w-[50%] bg-white p-2 mt-[10%]">
+        <div className={computedPage()}>
           <Outlet />
         </div>
         <ScrollRestoration />
         <Scripts />
         <LiveReload />
+      </body>
+    </html>
+  );
+}
+export function ErrorBoundary() {
+  const error = useRouteError();
+  console.error(error);
+  return (
+    <html lang="en">
+      <head>
+        <title>Oh no!</title>
+        <Meta />
+        <Links />
+      </head>
+      <body>
+        <p>No Way!</p>
+        {/* add the UI you want your users to see */}
+        <Scripts />
       </body>
     </html>
   );

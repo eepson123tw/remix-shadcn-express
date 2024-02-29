@@ -40,8 +40,8 @@ export function DataTable<TData, TValue>({
   });
 
   return (
-    <>
-      <div className="rounded-md border mt-2">
+    <div>
+      <div className="rounded-md border mt-2 ">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -95,6 +95,6 @@ export function DataTable<TData, TValue>({
         {table.getFilteredSelectedRowModel().rows.length} of{" "}
         {table.getFilteredRowModel().rows.length} row(s) selected.
       </div>
-    </>
+    </div>
   );
 }
