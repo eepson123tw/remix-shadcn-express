@@ -9,8 +9,8 @@ import invariant from "tiny-invariant";
 
 export type todoItem = {
   title: string;
-  description?: string;
-  isCompleted: boolean;
+  description: string;
+  isCompleted?: boolean;
   dueDate?: string;
   priority?: "low" | "medium" | "high";
   tags?: string[];
@@ -84,7 +84,6 @@ const fakeTodo = {
 export async function getTodo(query?: string | null) {
   await new Promise((resolve) => setTimeout(resolve, 500));
   let todoList = await fakeTodo.getAll();
-
   if (query) {
     todoList = matchSorter(todoList, query, {
       keys: ["title", "description", "uuId"],
@@ -93,10 +92,10 @@ export async function getTodo(query?: string | null) {
   return todoList.sort(sortBy("last", "createdAt"));
 }
 
-// export async function createEmptyContact() {
-//   const contact = await fakeContacts.create({});
-//   return contact;
-// }
+export async function createTodo(todoItem: todoItem) {
+  const contact = await fakeTodo.create(todoItem);
+  return contact;
+}
 
 // export async function getTodoItem(id: string) {
 //   return fakeTodo.get(id);
@@ -105,7 +104,8 @@ export async function getTodo(query?: string | null) {
 export async function updateTodo(id: string, updates: object) {
   const contact = await fakeTodo.get(id);
   if (!contact) {
-    throw new Error(`No contact found for ${id},updateTodo Error`);
+    throw new Error(`No contact found for ${id} updateTodo Error`);
+    redirect("/");
   }
   await fakeTodo.set(id, { ...contact, ...updates });
   return contact;
