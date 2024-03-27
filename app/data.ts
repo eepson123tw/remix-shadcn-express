@@ -9,8 +9,8 @@ import invariant from "tiny-invariant";
 
 export type todoItem = {
   title: string;
-  description?: string;
-  isCompleted: boolean;
+  description: string;
+  isCompleted?: boolean;
   dueDate?: string;
   priority?: "low" | "medium" | "high";
   tags?: string[];
@@ -93,10 +93,10 @@ export async function getTodo(query?: string | null) {
   return todoList.sort(sortBy("last", "createdAt"));
 }
 
-// export async function createEmptyContact() {
-//   const contact = await fakeContacts.create({});
-//   return contact;
-// }
+export async function createTodo(todoItem: todoItem) {
+  const contact = await fakeTodo.create(todoItem);
+  return contact;
+}
 
 // export async function getTodoItem(id: string) {
 //   return fakeTodo.get(id);

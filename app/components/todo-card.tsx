@@ -1,7 +1,7 @@
 "use client";
 
 import { useForm, SubmitHandler } from "react-hook-form";
-import { useSubmit } from "@remix-run/react";
+import { useSubmit, useNavigate } from "@remix-run/react";
 import { ajvResolver } from "@hookform/resolvers/ajv";
 import { Form } from "@remix-run/react";
 import { Label } from "@/components/ui/label";
@@ -38,7 +38,9 @@ export function TodoCard({ className, ...props }: CardProps) {
     },
   });
 
+  const navigate = useNavigate();
   const submit = useSubmit();
+
   const onSubmit = (formData: formData) => {
     console.log(`You said: ${JSON.stringify(formData, null, 4)}`);
     submit(formData, { method: "post" });
@@ -104,7 +106,9 @@ export function TodoCard({ className, ...props }: CardProps) {
         </Form>
       </CardContent>
       <CardFooter className="flex justify-between">
-        <Button variant="outline">Cancel</Button>
+        <Button variant="outline" onClick={() => navigate("/")}>
+          Cancel
+        </Button>
         <Button
           form="todo-form"
           className={isCreate ? "bg-green-400" : "bg-blue-400"}
