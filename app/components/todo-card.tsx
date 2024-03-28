@@ -42,7 +42,6 @@ export function TodoCard({ className, ...props }: CardProps) {
   const submit = useSubmit();
 
   const onSubmit = (formData: formData) => {
-    console.log(`You said: ${JSON.stringify(formData, null, 4)}`);
     submit(formData, { method: "post" });
   };
 
@@ -74,7 +73,9 @@ export function TodoCard({ className, ...props }: CardProps) {
                 defaultValue={todo?.title}
                 {...register("title")}
               />
-              <p>{errors?.title && errors?.title.message}</p>
+              <p className="text-red-700">
+                {errors?.title && errors?.title.message}
+              </p>
             </div>
             <div className="flex flex-col space-y-1.5">
               <Label htmlFor="description">Description</Label>
@@ -85,7 +86,9 @@ export function TodoCard({ className, ...props }: CardProps) {
                 defaultValue={todo?.description}
                 {...register("description")}
               />
-              <p>{errors?.description && errors?.description.message}</p>
+              <p className="text-red-700">
+                {errors?.description && errors?.description.message}
+              </p>
             </div>
             <div className="flex items-center">
               <Checkbox

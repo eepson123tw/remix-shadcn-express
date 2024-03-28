@@ -1,4 +1,8 @@
-import { isRouteErrorResponse, useRouteError } from "@remix-run/react";
+import {
+  isRouteErrorResponse,
+  useRouteError,
+  useNavigate,
+} from "@remix-run/react";
 
 export async function loader() {
   throw new Response("Not found", { status: 404 });
@@ -7,6 +11,7 @@ export async function loader() {
 // 404 Page
 export function ErrorBoundary() {
   const error = useRouteError();
+  const navigate = useNavigate();
 
   if (isRouteErrorResponse(error)) {
     return (
@@ -15,6 +20,12 @@ export function ErrorBoundary() {
           {error.status} {error.statusText}
         </h1>
         <p>{error.data} ~</p>
+        <button
+          className="p-2 bg-black text-white"
+          onClick={() => navigate("/")}
+        >
+          index
+        </button>
       </div>
     );
   } else if (error instanceof Error) {

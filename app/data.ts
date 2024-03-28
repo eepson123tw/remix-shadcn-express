@@ -84,7 +84,6 @@ const fakeTodo = {
 export async function getTodo(query?: string | null) {
   await new Promise((resolve) => setTimeout(resolve, 500));
   let todoList = await fakeTodo.getAll();
-
   if (query) {
     todoList = matchSorter(todoList, query, {
       keys: ["title", "description", "uuId"],
@@ -105,7 +104,8 @@ export async function createTodo(todoItem: todoItem) {
 export async function updateTodo(id: string, updates: object) {
   const contact = await fakeTodo.get(id);
   if (!contact) {
-    throw new Error(`No contact found for ${id},updateTodo Error`);
+    throw new Error(`No contact found for ${id} updateTodo Error`);
+    redirect("/");
   }
   await fakeTodo.set(id, { ...contact, ...updates });
   return contact;

@@ -9,6 +9,7 @@ import {
   ScrollRestoration,
   useLocation,
   useLoaderData,
+  useNavigation,
 } from "@remix-run/react";
 import type { LoaderFunctionArgs } from "@remix-run/node";
 import { useState } from "react";
@@ -46,6 +47,10 @@ export let handle = {
   i18n: "index",
 };
 
+function Loading() {
+  return <div>Loading...</div>;
+}
+
 function LangSelect() {
   const { i18n } = useTranslation();
   const languages = ["zh-TW", "en"];
@@ -82,6 +87,7 @@ export default function Root() {
   const computedPage = () => `${inRoot ? "bg-white p-2" : ""} w-[50%] mt-[10%]`;
   let { locale } = useLoaderData<typeof loader>();
   let { i18n, t } = useTranslation();
+  const navigation = useNavigation();
 
   // This hook will change the i18n instance language to the current locale
   // detected by the loader, this way, when we do something to change the
@@ -103,9 +109,13 @@ export default function Root() {
         <div className="pt-20">
           <LangSelect />
         </div>
-        <div className={computedPage()}>
-          <Outlet />
-        </div>
+        {navigation.state !== "idle" ? (
+          <Loading></Loading>
+        ) : (
+          <div className={computedPage()}>
+            <Outlet />
+          </div>
+        )}
         <ScrollRestoration />
         <Scripts />
         <LiveReload />
