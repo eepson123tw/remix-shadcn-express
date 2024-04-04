@@ -1,12 +1,12 @@
 import * as React from "react";
 
 import { cn } from "@/lib/utils";
-import type { uuIdTodoItem } from "../../../app/data";
+import type { todoItem } from "../../../app/data";
 
 const Card = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement> & { uuId?: string } & {
-    todo?: uuIdTodoItem;
+    todo?: todoItem | null;
   }
 >(({ className, ...props }, ref) => (
   <div

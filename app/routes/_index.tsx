@@ -17,7 +17,7 @@ import {
   useNavigate,
   // useActionData,
 } from "@remix-run/react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -34,25 +34,17 @@ export const meta: MetaFunction = () => {
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const url = new URL(request.url);
   const q = url.searchParams.get("q");
-  const todoList = await getTodo(q);
+  const response = await fetch(process.env.API_PATH + "/sqlite/todo", {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  const data = await response.json();
+  const todoList = await getTodo(data, q);
   return json({ todoList, q });
 };
 
-// export async function action({ request }: ActionFunctionArgs) {
-//   const formData = await request.formData();
-//   const q = String(formData.get("q"));
-//   const errors: { [key: string]: string } = {};
-
-//   if (!q) {
-//     errors.q = "WWWWWWW";
-//   }
-
-//   if (Object.keys(errors).length > 0) {
-//     return json({ errors });
-//   }
-//   // Redirect to dashboard if validation is successful
-//   return redirect(`/todo/${q}`);
-// }
 export default function Index() {
   const { todoList, q } = useLoaderData<typeof loader>();
   // const actionData = useActionData<typeof action>();
@@ -60,12 +52,10 @@ export default function Index() {
   const navigate = useNavigate();
   const submit = useSubmit();
   const [query, setQuery] = useState(q || "");
+
   const searching =
     navigation.location &&
     new URLSearchParams(navigation.location.search).has("q");
-  useEffect(() => {
-    setQuery(q || "");
-  }, [q]);
 
   return (
     <div style={{ fontFamily: "system-ui, sans-serif", lineHeight: "1.8" }}>

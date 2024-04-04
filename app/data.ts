@@ -6,8 +6,10 @@ import { matchSorter } from "match-sorter";
 // @ts-expect-error - no types, but it's a tiny function
 import sortBy from "sort-by";
 import invariant from "tiny-invariant";
+import { redirect } from "@remix-run/node";
 
 export type todoItem = {
+  uuId: string;
   title: string;
   description: string;
   isCompleted?: boolean;
@@ -22,12 +24,12 @@ export type uuIdTodoItem = todoItem & {
   updatedAt?: string;
 };
 
-const uuIdV1 = () => {
-  return "xxxx-xxxx-xxx-xxxx".replace(/[x]/g, () => {
-    const r = Math.floor(Math.random() * 16);
-    return r.toString(16);
-  });
-};
+// const uuIdV1 = () => {
+//   return "xxxx-xxxx-xxx-xxxx".replace(/[x]/g, () => {
+//     const r = Math.floor(Math.random() * 16);
+//     return r.toString(16);
+//   });
+// };
 
 const getId = (uuid: string): string => {
   let id: string = "";
@@ -43,21 +45,19 @@ const getId = (uuid: string): string => {
 // This is just a fake DB table. In a real app you'd be talking to a real db or
 // fetching from an existing API.
 const fakeTodo = {
-  todoList: {} as Record<string, uuIdTodoItem>,
-  async getAll(): Promise<uuIdTodoItem[]> {
+  todoList: {} as Record<string, todoItem>,
+  async getAll(): Promise<todoItem[]> {
     return Object.keys(fakeTodo.todoList)
       .map((key) => fakeTodo.todoList[key])
       .sort(sortBy("-createdAt", "last"));
   },
-  async get(uuid: string): Promise<uuIdTodoItem | null> {
-    const id = getId(uuid);
-    return fakeTodo.todoList[id] || null;
+  async get(uuId: string): Promise<todoItem | null> {
+    return fakeTodo.todoList[uuId] || null;
   },
-  async create(values: todoItem): Promise<uuIdTodoItem> {
+  async create(values: todoItem): Promise<todoItem> {
     const id = Math.random().toString(36).substring(2, 9);
     const createdAt = new Date().toISOString();
     const newContact = {
-      uuId: uuIdV1(),
       createdAt,
       updatedAt: createdAt,
       ...values,
@@ -65,9 +65,9 @@ const fakeTodo = {
     fakeTodo.todoList[id] = newContact;
     return newContact;
   },
-  async set(uuid: string, values: uuIdTodoItem): Promise<uuIdTodoItem> {
-    const id = getId(uuid);
-    const todo = await fakeTodo.get(uuid);
+  async set(uuId: string, values: todoItem): Promise<todoItem> {
+    const id = getId(uuId);
+    const todo = await fakeTodo.get(uuId);
     invariant(todo, `No contact found for ${id}, set Error`);
     const updatedContact = { ...todo, ...values };
     fakeTodo.todoList[id] = updatedContact;
@@ -81,9 +81,15 @@ const fakeTodo = {
 
 ////////////////////////////////////////////////////////////////////////////////
 // Handful of helper functions to be called from route loaders and actions
-export async function getTodo(query?: string | null) {
-  await new Promise((resolve) => setTimeout(resolve, 500));
-  let todoList = await fakeTodo.getAll();
+export async function getTodo(data?: todoItem[], query?: string | null) {
+  await new Promise((resolve) => setTimeout(resolve, 10));
+  let todoList = data ? data : await fakeTodo.getAll();
+  if (data) {
+    fakeTodo.todoList = data.reduce((acc, item) => {
+      acc[item.uuId] = item;
+      return acc;
+    }, {} as Record<string, todoItem>);
+  }
   if (query) {
     todoList = matchSorter(todoList, query, {
       keys: ["title", "description", "uuId"],
@@ -97,9 +103,9 @@ export async function createTodo(todoItem: todoItem) {
   return contact;
 }
 
-// export async function getTodoItem(id: string) {
-//   return fakeTodo.get(id);
-// }
+export async function getTodoItem(uuId: string) {
+  return fakeTodo.get(uuId);
+}
 
 export async function updateTodo(id: string, updates: object) {
   const contact = await fakeTodo.get(id);
@@ -110,38 +116,3 @@ export async function updateTodo(id: string, updates: object) {
   await fakeTodo.set(id, { ...contact, ...updates });
   return contact;
 }
-
-// export async function deleteContact(id: string) {
-//   fakeContacts.destroy(id);
-// }
-
-const base: todoItem[] = [
-  {
-    title: "Grocery Shopping",
-    description: "Buy groceries for the week",
-    isCompleted: false,
-    dueDate: "2024-02-24",
-    priority: "medium",
-    tags: ["groceries", "weekly"],
-  },
-  {
-    title: "Finish Book Chapter",
-    description: "ark",
-    isCompleted: false,
-    dueDate: "2024-02-25",
-    priority: "low",
-    tags: ["reading", "personal development"],
-  },
-  {
-    title: "Prepare Presentation",
-    description: "Prepare the monthly review presentation",
-    isCompleted: false,
-    dueDate: "2024-02-29",
-    priority: "high",
-    tags: ["work", "urgent"],
-  },
-];
-
-base.forEach((todoItem) => {
-  fakeTodo.create(todoItem);
-});

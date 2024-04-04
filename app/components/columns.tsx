@@ -15,9 +15,9 @@ import {
 
 import { useNavigate } from "@remix-run/react";
 
-import type { uuIdTodoItem } from "../data";
+import type { todoItem } from "../data";
 
-export const columns: ColumnDef<uuIdTodoItem>[] = [
+export const columns: ColumnDef<todoItem>[] = [
   {
     id: "isCompleted",
     header: ({ table }) => (
@@ -47,7 +47,7 @@ export const columns: ColumnDef<uuIdTodoItem>[] = [
     header: () => <div className="text-left font-bold ">Title</div>,
     cell: ({ row }) => {
       const title = row.getValue("title") as string;
-      return <div className="font-medium">^{title}^</div>;
+      return <div className="font-medium">{title}</div>;
     },
   },
   {
@@ -62,6 +62,7 @@ export const columns: ColumnDef<uuIdTodoItem>[] = [
     id: "actions",
     cell: ({ row }) => {
       const todoItem = row.original;
+      // eslint-disable-next-line react-hooks/rules-of-hooks
       const navigate = useNavigate();
       return (
         <DropdownMenu>
@@ -90,7 +91,19 @@ export const columns: ColumnDef<uuIdTodoItem>[] = [
             >
               Edit
             </DropdownMenuItem>
-            <DropdownMenuItem className="text-red-300  focus:text-red-500 cursor-pointer">
+            <DropdownMenuItem
+              className="text-red-300  focus:text-red-500 cursor-pointer"
+              onClick={() => {
+                fetch(
+                  window.process.env + `/todo-api?deleteId=${todoItem.uuId}`,
+                  {
+                    method: "DELETE",
+                  }
+                ).then(() => {
+                  window.location.reload();
+                });
+              }}
+            >
               Delete
             </DropdownMenuItem>
           </DropdownMenuContent>

@@ -12,7 +12,6 @@ import {
   useNavigation,
 } from "@remix-run/react";
 import type { LoaderFunctionArgs } from "@remix-run/node";
-import { useState } from "react";
 import { json } from "@remix-run/node";
 import { useChangeLanguage } from "remix-i18next/react";
 import { useTranslation } from "react-i18next";
@@ -35,11 +34,11 @@ export const links: LinksFunction = () => [
 ];
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  let locale = await i18next.getLocale(request);
-  return json({ locale });
+  const locale = await i18next.getLocale(request);
+  return json({ locale, ENV: { LOCAL_PATH: process.env.LOCAL_PATH } });
 }
 
-export let handle = {
+export const handle = {
   // In the handle export, we can add a i18n key with namespaces our route
   // will need to load. This key can be a single string or an array of strings.
   // TIP: In most cases, you should set this to your defaultNS from your i18n config
@@ -84,9 +83,9 @@ export default function Root() {
   // Get the locale from the loader
   const location = useLocation();
   const inRoot = !location.pathname.includes("todo");
-  const computedPage = () => `${inRoot ? "bg-white p-2" : ""} w-[50%] mt-[10%]`;
-  let { locale } = useLoaderData<typeof loader>();
-  let { i18n, t } = useTranslation();
+  const computedPage = () => `${inRoot ? "bg-white p-2" : ""} w-[85%] `;
+  const { locale, ENV } = useLoaderData<typeof loader>();
+  const { i18n, t } = useTranslation();
   const navigation = useNavigation();
 
   // This hook will change the i18n instance language to the current locale
@@ -101,12 +100,12 @@ export default function Root() {
         <Meta />
         <Links />
       </head>
-      <body className="bg-gradient-to-r from-cyan-500 to-blue-500 h-[100svh] flex  items-center flex-col">
-        <h1 className="text-4xl absolute top-5">
+      <body className="bg-gradient-to-r from-cyan-500 to-blue-500  flex  items-center flex-col h-full">
+        <h1 className="text-xl mb-2 top-5 p-2">
           {t("greeting")}
           {t("user")}
         </h1>
-        <div className="pt-20">
+        <div className="mb-5">
           <LangSelect />
         </div>
         {navigation.state !== "idle" ? (
@@ -116,6 +115,13 @@ export default function Root() {
             <Outlet />
           </div>
         )}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `window.process = ${JSON.stringify({
+              env: ENV.LOCAL_PATH,
+            })}`,
+          }}
+        />
         <ScrollRestoration />
         <Scripts />
         <LiveReload />

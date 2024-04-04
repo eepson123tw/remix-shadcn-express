@@ -1,6 +1,6 @@
 "use client";
 
-import { useForm, SubmitHandler } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { useSubmit, useNavigate } from "@remix-run/react";
 import { ajvResolver } from "@hookform/resolvers/ajv";
 import { Form } from "@remix-run/react";
@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/card";
 
 import type { formData } from "~/utils/form";
-import formValidate, { schema } from "~/utils/form";
+import { schema } from "~/utils/form";
 
 type CardProps = React.ComponentProps<typeof Card>;
 
@@ -28,7 +28,6 @@ export function TodoCard({ className, ...props }: CardProps) {
   const {
     register,
     handleSubmit,
-    watch,
     formState: { errors },
   } = useForm<formData>({
     mode: "onChange",
@@ -46,7 +45,7 @@ export function TodoCard({ className, ...props }: CardProps) {
   };
 
   return (
-    <Card>
+    <Card className={className}>
       <CardHeader>
         <CardTitle>
           {isCreate ? "Create Todo" : props.uuId?.toLocaleUpperCase()}
