@@ -32,7 +32,7 @@ COPY .env.prod $ENV_FILE
 RUN npm run build
 
 # Make port 3000 available to the world outside this container
-EXPOSE 8080
+EXPOSE 3000
 
 # Command to start your app
 CMD [ "npm", "run", "start" ]
