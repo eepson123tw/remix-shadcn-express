@@ -19,14 +19,24 @@ export async function action({ request }: ActionFunctionArgs) {
         return redirect("/404");
       }
       redirect("/");
-      break;
+      return json(data);
     }
-    // case "PUT": {
-    //   /* handle "PUT" */
-    // }
-    // case "PATCH": {
-    //   /* handle "PATCH" */
-    // }
+    case "PUT": {
+      const editId = request.url.split("?editId=")[1];
+      /* handle "PUT" */
+      const res = await fetch(process.env.API_PATH + `/sqlite/todo/${editId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: request.body,
+      });
+      const data = await res.json();
+      if (data.error) {
+        return redirect("/404");
+      }
+      return json(data);
+    }
     case "DELETE": {
       const deleteId = request.url.split("?deleteId=")[1];
       const res = await fetch(

@@ -12,7 +12,7 @@ export type todoItem = {
   uuId: string;
   title: string;
   description: string;
-  isCompleted?: boolean;
+  isCompleted: number;
   dueDate?: string;
   priority?: "low" | "medium" | "high";
   tags?: string[];

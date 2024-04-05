@@ -1,9 +1,8 @@
 "use client";
 
 import { useForm } from "react-hook-form";
-import { useSubmit, useNavigate } from "@remix-run/react";
+import { useSubmit, useNavigate, Form } from "@remix-run/react";
 import { ajvResolver } from "@hookform/resolvers/ajv";
-import { Form } from "@remix-run/react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -41,14 +40,18 @@ export function TodoCard({ className, ...props }: CardProps) {
   const submit = useSubmit();
 
   const onSubmit = (formData: formData) => {
-    submit(formData, { method: "post" });
+    submit(formData, { method: "put" });
   };
+
+  console.log(todo);
 
   return (
     <Card className={className}>
       <CardHeader>
         <CardTitle>
-          {isCreate ? "Create Todo" : props.uuId?.toLocaleUpperCase()}
+          {isCreate
+            ? "Create Todo"
+            : `Edit ID: ${props.uuId?.toLocaleUpperCase()}`}
         </CardTitle>
         <CardDescription>
           {isCreate
@@ -104,6 +107,7 @@ export function TodoCard({ className, ...props }: CardProps) {
                 Are u completed?
               </Label>
             </div>
+            <div className="flex items-center"></div>
           </div>
         </Form>
       </CardContent>

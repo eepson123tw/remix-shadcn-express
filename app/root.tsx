@@ -83,7 +83,7 @@ export default function Root() {
   // Get the locale from the loader
   const location = useLocation();
   const inRoot = !location.pathname.includes("todo");
-  const computedPage = () => `${inRoot ? "bg-white p-2" : ""} w-[85%] `;
+  const computedPage = () => `${inRoot ? "bg-white p-4 rounded" : ""} w-[85%] `;
   const { locale, ENV } = useLoaderData<typeof loader>();
   const { i18n, t } = useTranslation();
   const navigation = useNavigation();
@@ -100,7 +100,7 @@ export default function Root() {
         <Meta />
         <Links />
       </head>
-      <body className="bg-gradient-to-r from-cyan-500 to-blue-500  flex  items-center flex-col h-full">
+      <body className="bg-gradient-to-r from-cyan-500 to-blue-500 flex items-center flex-col h-full">
         <h1 className="text-xl mb-2 top-5 p-2">
           {t("greeting")}
           {t("user")}
