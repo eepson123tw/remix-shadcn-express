@@ -15,9 +15,17 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 import type { formData } from "~/utils/form";
 import { schema } from "~/utils/form";
+import { useState } from "react";
 
 type CardProps = React.ComponentProps<typeof Card>;
 
@@ -39,11 +47,11 @@ export function TodoCard({ className, ...props }: CardProps) {
   const navigate = useNavigate();
   const submit = useSubmit();
 
-  const onSubmit = (formData: formData) => {
-    submit(formData, { method: "put" });
-  };
+  const [priority, setPriority] = useState(todo?.priority || "");
 
-  console.log(todo);
+  const onSubmit = (formData: formData) => {
+    submit({ ...formData, priority }, { method: "put" });
+  };
 
   return (
     <Card className={className}>
@@ -107,7 +115,36 @@ export function TodoCard({ className, ...props }: CardProps) {
                 Are u completed?
               </Label>
             </div>
-            <div className="flex items-center"></div>
+            <div className="flex flex-col space-y-1.5">
+              <Label htmlFor="priority">Priority</Label>
+              <Select
+                defaultValue={priority}
+                onValueChange={(value) => setPriority(value)}
+                {...register("priority")}
+              >
+                <SelectTrigger className="w-1/2">
+                  <SelectValue placeholder={todo?.priority || ""} />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="low">low</SelectItem>
+                  <SelectItem value="medium">medium</SelectItem>
+                  <SelectItem value="high">high</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="flex flex-col space-y-1.5">
+              <Label htmlFor="tags">Tags</Label>
+              <Input
+                id="tags"
+                type="text"
+                placeholder="Title of your Todo"
+                defaultValue={todo?.tags}
+                {...register("tags")}
+              />
+              <p className="text-red-700">
+                {errors?.title && errors?.title.message}
+              </p>
+            </div>
           </div>
         </Form>
       </CardContent>

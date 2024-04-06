@@ -6,6 +6,8 @@ export type formData = {
   title: string;
   description: string;
   isCompleted?: boolean;
+  tags: string;
+  priority: string;
 };
 
 export const schema: JSONSchemaType<formData> = {
@@ -15,9 +17,19 @@ export const schema: JSONSchemaType<formData> = {
       type: "string",
       minLength: 1,
     },
+    tags: {
+      type: "string",
+      minLength: 1,
+    },
     description: {
       type: "string",
       minLength: 1,
+    },
+    priority: {
+      type: "string",
+      minLength: 1,
+      enum: ["low", "medium", "high"],
+      // errorMessage: "Select a priority",
     },
     isCompleted: { type: "boolean", nullable: true },
   },
