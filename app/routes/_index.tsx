@@ -6,7 +6,7 @@ import type {
 } from "@remix-run/node";
 
 import { getTodo } from "../data";
-import { json, redirect } from "@remix-run/node";
+import { json } from "@remix-run/node";
 import {
   useLoaderData,
   // Form,
@@ -28,7 +28,7 @@ import { useCreateQueryString } from "~/hooks/useCreateQueryString";
 export const meta: MetaFunction = () => {
   return [
     { title: "TodoList" },
-    { name: "description", content: "Welcome to Remix!" },
+    { name: "description", content: "Welcome to TodoList!" },
   ];
 };
 
@@ -56,22 +56,18 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     // totalPages, // 总页数
     // sort,
   } = await response.json();
-
   const todoList = await getTodo(items, q);
-  redirect("/1231231");
-
-  // console.log({ page, perPages });
-  // console.log({ perPage, currentPage, items, todoList });
   return json({ todoList, q, currentPage, perPage });
 };
 
 export default function Index() {
   const { todoList, q, currentPage, perPage } = useLoaderData<typeof loader>();
-  const columns = useMemo(() => getColumns(), []);
   const [searchParams] = useSearchParams();
-  const createQueryString = useCreateQueryString(searchParams);
-  const navigate = useNavigate();
   const { pathname, search } = useLocation();
+  const navigate = useNavigate();
+
+  const columns = useMemo(() => getColumns(), []);
+  const createQueryString = useCreateQueryString(searchParams);
 
   useEffect(() => {
     search === "" &&

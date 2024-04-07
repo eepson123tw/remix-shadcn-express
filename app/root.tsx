@@ -1,5 +1,5 @@
 import { cssBundleHref } from "@remix-run/css-bundle";
-import type { LinksFunction } from "@remix-run/node";
+import type { LinksFunction, LoaderFunctionArgs } from "@remix-run/node";
 import {
   Links,
   LiveReload,
@@ -11,7 +11,6 @@ import {
   useLoaderData,
   useNavigation,
 } from "@remix-run/react";
-import type { LoaderFunctionArgs } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { useChangeLanguage } from "remix-i18next/react";
 import { useTranslation } from "react-i18next";
@@ -47,7 +46,15 @@ export const handle = {
 };
 
 function Loading() {
-  return <div>Loading...</div>;
+  return (
+    <div className="p-2 absolute bg-gray-600 text-white top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2  w-[200px] h-[50px] rounded-lg shadow-lg flex items-center justify-center">
+      <svg
+        className="animate-spin h-5 w-5 mr-3 bg-white"
+        viewBox="0 0 24 24"
+      ></svg>
+      Loading...
+    </div>
+  );
 }
 
 function LangSelect() {
@@ -81,13 +88,12 @@ function LangSelect() {
 
 export default function Root() {
   // Get the locale from the loader
-  const location = useLocation();
-  const inRoot = !location.pathname.includes("todo");
-  const computedPage = () => `${inRoot ? "bg-white p-4 rounded" : ""} w-[85%] `;
   const { locale, ENV } = useLoaderData<typeof loader>();
+  const location = useLocation();
   const { i18n, t } = useTranslation();
   const navigation = useNavigation();
-
+  const inRoot = !location.pathname.includes("todo");
+  const computedPage = () => `${inRoot ? "bg-white p-4 rounded" : ""} w-[85%] `;
   // This hook will change the i18n instance language to the current locale
   // detected by the loader, this way, when we do something to change the
   // language, this locale will change and i18next will load the correct
@@ -100,7 +106,7 @@ export default function Root() {
         <Meta />
         <Links />
       </head>
-      <body className="bg-gradient-to-r from-cyan-500 to-blue-500 flex items-center flex-col h-full">
+      <body className="bg-gradient-to-r from-cyan-200 to-blue-700 flex items-center flex-col h-full lg:pb-0 pb-6">
         <h1 className="text-xl mb-2 top-5 p-2">
           {t("greeting")}
           {t("user")}

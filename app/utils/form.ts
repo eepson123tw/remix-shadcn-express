@@ -29,7 +29,6 @@ export const schema: JSONSchemaType<formData> = {
       type: "string",
       minLength: 1,
       enum: ["low", "medium", "high"],
-      // errorMessage: "Select a priority",
     },
     isCompleted: { type: "boolean", nullable: true },
   },

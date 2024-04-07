@@ -23,7 +23,6 @@ export async function action({ request }: ActionFunctionArgs) {
     }
     case "PUT": {
       const editId = request.url.split("?editId=")[1];
-      /* handle "PUT" */
       const res = await fetch(process.env.API_PATH + `/sqlite/todo/${editId}`, {
         method: "PUT",
         headers: {
